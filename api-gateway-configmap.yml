@@ -4,7 +4,7 @@ metadata:
   namespace: tripdiary
 data:
   UserHost: tripdiary-api-gateway-server.tripdiary.svc.cluster.local
-  UserPort: '3081'
+  UserPort: '3080'
   JWT_SECRET: secret
   CORS_ORIGIN_LIST: '*'
 kind: ConfigMap
