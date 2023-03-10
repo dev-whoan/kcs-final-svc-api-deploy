@@ -3,7 +3,7 @@ kind: Rollout # Rollout으로 생성
 metadata:
   name: canary-rollout
 spec:
-  replicas: 4 # 배포개수
+  replicas: 8 # 배포개수
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: canary-rollouts-demo
-        image: nginx:1.17.0
+        image: nginx:1.15.0
       # imagePullPolicy: Always
         ports:
         - containerPort: 5000
