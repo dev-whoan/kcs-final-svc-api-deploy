@@ -15,19 +15,20 @@ spec:
     spec:
       containers:
       - name: canary-rollouts-demo
-        image: nginx:1.15.0
+        image: nginx:1.16.0
       # imagePullPolicy: Always
         ports:
         - containerPort: 5000
   # 이 부분에서 카나리로 지정
   strategy:
     canary:
-      maxSurge: "100%"    # canary 배포로 생성할 pod의 비율
+      maxSurge: "50%"    # canary 배포로 생성할 pod의 비율
       maxUnavailable: 0  # 업데이트 될 때 사용할 수 없는 pod의 최대 수
       steps:
-     
+      - setCanaryScale: # canary 배포비율
+          weight: 50
       - setWeight: 25    # 카나리로 배포된 서버로 전송해야될 트래픽 비율
-      - pause: {duration: 1m}
+      - pause: {duration: 30s}
     
       
       
