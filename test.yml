@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: canary-rollouts-demo
-        image: nginx:1.19.0
+        image: nginx:1.16.0
       # imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -26,7 +26,13 @@ spec:
       maxUnavailable: 0  # 업데이트 될 때 사용할 수 없는 pod의 최대 수
       steps:
       - setWeight: 25    # 카나리로 배포된 서버로 전송해야될 트래픽 비율
-      - pause: {duration:20s}        # AutoPromotion Time (하단 설명 참조)
+      - pause: {}
+      - setWeight: 50
+      - pause: {duration: 20s}
+      - setWeight: 75
+      - pause: {duration: 20s}
+      - setWeight: 100
+      - pause: {duration: 20s}
 ---
 kind: Service
 apiVersion: v1
