@@ -1,0 +1,89 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout # Rollout으로 생성
+metadata:
+  name: api-gateway-rollout
+  namespace: tripdiary
+spec:
+  replicas: 3 # 배포개수
+  revisionHistoryLimit: 5 #replicaset 개수
+  selector:
+    matchLabels:
+      app: api-gateway-pod
+  template:
+    metadata:
+      labels:
+        app: api-gateway-pod
+    spec:
+      containers:
+      - name: api-gateway-pod
+        env:
+          - name: JWT_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: JWT_SECRET
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: PORT
+          - name: CORS_ORIGIN_LIST
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: CORS_ORIGIN_LIST
+
+          - name: UserHost
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: UserHost
+
+          - name: UserPort
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: UserPort
+          - name: FileServerHost
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: FileServerHost
+          - name: FileServerPort
+            valueFrom:
+              configMapKeyRef:
+                name: api-gateway-configmap
+                key: FileServerPort
+        image: devwhoan/kcs-apigateway:21
+        ports:
+        - containerPort: 3080
+#        volumeMounts:
+#          - name: gateway-env
+#            mountPath: /gateway/.env
+#            readOnly: true
+#      volumes:
+#        - name: gateway-env
+#          configMap:
+#            name: api-gateway-configmap
+  strategy:
+    canary:
+      maxSurge: "25%"    # canary 배포로 생성할 pod의 비율
+      maxUnavailable: 0  # 업데이트 될 때 사용할 수 없는 pod의 최대 수
+      steps:
+      - setWeight: 33    # 카나리로 배포할 pod 비율 8개배포햇으면 그중 절반이 카나리로 먼저배포함
+      - pause: {duration: 1h} # 30초 뒤에 old pod 다없애고 new version pod로 업데이트
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: api-gateway-pod-expose
+  namespace: tripdiary
+spec:
+  selector:
+    app: api-gateway-pod
+  ports:
+  - protocol: TCP
+    port: 3080
+    targetPort: 3080
+    name: api-gateway-exposer
+  type: LoadBalancer
