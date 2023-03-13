@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: api-gateway-pod
+        image: devwhoan/kcs-apigateway:21
         env:
           - name: JWT_SECRET
             valueFrom:
@@ -54,7 +55,6 @@ spec:
               configMapKeyRef:
                 name: api-gateway-configmap
                 key: FileServerPort
-        image: devwhoan/kcs-apigateway:21
         ports:
         - containerPort: 3080
 #        volumeMounts:
