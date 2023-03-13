@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api-gateway-pod
-        image: devwhoan/kcs-apigateway:36
+        image: devwhoan/kcs-apigateway:37
         env:
           - name: JWT_SECRET
             valueFrom:
